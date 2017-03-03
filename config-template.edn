@@ -1,0 +1,4 @@
+{:token "YOUR TOKEN HERE"
+ :ownerID "YOUR ID HERE"
+ :prefix "h/"
+ :msgDeleteDelay 3000}
