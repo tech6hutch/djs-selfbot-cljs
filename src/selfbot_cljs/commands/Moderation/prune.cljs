@@ -2,13 +2,13 @@
   (:require [selfbot-cljs.core :as h]))
 
 (aset js/exports "run" (fn
-  "(prefix)prune <n>
-
-  Deletes `n` of my messages in this channel
-
-  <n> is the number of messages to delete (it only looks in the last 100
-  messages in the channel, though, including other people's messages, so it
-  may not find `n` messages of my own)."
+  ;; (prefix)prune <n>
+  ;;
+  ;; Deletes `n` of my messages in this channel
+  ;;
+  ;; <n> is the number of messages to delete (it only looks in the last 100
+  ;; messages in the channel, though, including other people's messages, so it
+  ;; may not find `n` messages of my own).
   [client msg [n]]
   (-> (.-channel msg)
       (.fetchMessages #js{:limit 100})
