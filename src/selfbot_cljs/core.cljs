@@ -1,21 +1,20 @@
 (ns selfbot-cljs.core
   (:require [cljs.nodejs :as nodejs]
-            [cljs.reader :as edn]
-            [cljs.js :as cljs])
+            [cljs.reader :as edn])
+            ; [cljs.js :as cljs])
   (:use [selfbot-cljs.fs :only [slurp]]))
 
 (nodejs/enable-util-print!)
 
-(def state (cljs/empty-state))
+; (def state (cljs/empty-state))
 
-(defn eval
-  [code cb]
-  (cljs/eval-str state
-                 code
-                 nil
-                 {:eval #(js/eval (:source %))}
-                ;  #(cb (clj->js %))))
-                 cb))
+; (defn eval
+;   [code cb]
+;   (cljs/eval-str state
+;                  code
+;                  nil
+;                  {:eval #(js/eval (:source %))}
+;                  #(cb (clj->js %))))
 
 (defn log
   "Calls the JS function console.log with the arguments."
