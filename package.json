@@ -13,7 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "discord.js": "^11.0.0",
-    "komada": "tech6hutch/komada#Utils",
+    "komada": "tech6hutch/komada#indev",
     "source-map-support": "^0.4.11"
   }
 }

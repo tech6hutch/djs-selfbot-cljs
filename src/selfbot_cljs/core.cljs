@@ -1,8 +1,8 @@
 (ns selfbot-cljs.core
   (:require [cljs.nodejs :as nodejs]
-            [cljs.reader :as edn])
+            [cljs.reader :as edn]
             ; [cljs.js :as cljs])
-  (:use [selfbot-cljs.fs :only [slurp]]))
+            [selfbot-cljs.utils :refer [slurp]]))
 
 (nodejs/enable-util-print!)
 
