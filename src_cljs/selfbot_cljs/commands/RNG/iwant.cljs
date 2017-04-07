@@ -4,10 +4,11 @@
 
 (defn init
   [client]
-  (set!
-   (.-word-dictionary js/exports)
-   (js->clj (js/require (str (.-clientBaseDir client) "word-dictionary.json"))
-            :keywordize-keys true)))
+  (let [sep (.-sep (js/require "path"))
+        file (str (.cwd js/process) sep "resources" sep "word-dictionary.json")]
+    (set!
+     (.-word-dictionary js/exports)
+     (js->clj (js/require file) :keywordize-keys true))))
 
 (defn rand-noun
   [dict spice]
