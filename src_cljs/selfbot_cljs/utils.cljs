@@ -1,4 +1,7 @@
-(ns selfbot-cljs.utils)
+(ns selfbot-cljs.utils
+  (:refer-clojure :exclude [delay]))
+  ;; For the linter 😐
+  ; (:require js))
 
 ;; File system
 
@@ -7,10 +10,21 @@
 (defn slurp [f]
   (.readFileSync fs f "utf8"))
 
+(defn spit [f content]
+  (.writeFileSync fs f content))
+
 ;; JS helpers
 
+(def timer (atom js/global))
+
 (defn set-timeout
-  "Wrapper for global.setTimeout"
-  ([f] (.setTimeout js/global f))
-  ([f delay] (.setTimeout js/global f delay))
-  ([f delay & params] (apply (.-setTimeout js/global) f delay params)))
+  "Wrapper for timer.setTimeout"
+  ([f] (.setTimeout @timer f))
+  ([f delay] (.setTimeout @timer f delay))
+  ([f delay & params] (apply (.-setTimeout @timer) f delay params)))
+
+(defn delay
+  "Turns set-timeout into a Promise"
+  [delay]
+  ;; % is the Promise's resolve function
+  (js/Promise. #(set-timeout % delay)))

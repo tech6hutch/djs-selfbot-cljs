@@ -45,7 +45,7 @@
                     :requiredFuncs []}))
 
 (def help #js{:name "iwant"
-              :description "Prints the phrase \"I want your ____ in my ____.\" with random words."
+              :description "Prints the phrase \"I want your ‗‗‗‗ in my ‗‗‗‗.\" with random words."
               :usage "[spice:num{0,10}]"
               :usageDelim ""
               :extendedHelp "`spice` is the percent chance of \"special\" words being used, out of 10. If provided, should be between 0 and 10. Default is 2."})
