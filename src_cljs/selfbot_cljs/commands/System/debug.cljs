@@ -1,8 +1,9 @@
 (ns selfbot-cljs.commands.System.debug
   (:require [clojure.string :refer [lower-case]]
             [goog.object :as o]
-            [selfbot-cljs.core :as h]
+            [selfbot-cljs.core :refer [error js-async]]
             [selfbot-cljs.utils :refer [slurp]]))
+
 (def fs (js/require "fs"))
 (def ^:private sep (.-sep (js/require "path")))
 
@@ -72,7 +73,7 @@
 (defn run-show-piece-src
   [client msg type name obj ext]
   (-> (send-src-message client (.-channel msg) type name obj ext)
-      (.catch h/error)))
+      (.catch error)))
 
 (defn run-show-piece
   [client msg type name obj ext]
@@ -80,11 +81,11 @@
     (-> (send-help-message client msg name)
         (.then #(-> (send-debug-message client msg
                                         type name obj ext)
-                    (.catch h/error)))
-        (.catch h/error))
+                    (.catch error)))
+        (.catch error))
     (-> (send-debug-message client msg
                             type name obj ext)
-        (.catch h/error))))
+        (.catch error))))
 
 (defn run-list-pieces
   [client chan type pieces]
@@ -95,7 +96,7 @@
                      (.reduce pieces-names #(str %1 ", " %2))
                      (str "No " type "s loaded"))]
     (-> (.sendCode chan "" pieces-msg)
-        (.catch h/error))))
+        (.catch error))))
 
 (defn run
   "(prefix)debug <type> <name> ['src' ext]"
@@ -121,7 +122,7 @@
             (run-show-piece-src client msg type name obj ext)
             (run-show-piece client msg type name obj ext))
           (-> (.sendCode (.-channel msg) "" (str "That " type " doesn't exist"))
-              (.catch h/error)))))))
+              (.catch error)))))))
 
 (def conf (clj->js {:enabled true
                     :selfbot false
@@ -137,6 +138,6 @@
               :usageDelim " "
               :extendedHelp "Use `*` as name to list all pieces of that type."})
 
-(aset js/module "exports" #js{:run run
+(aset js/module "exports" #js{:run (js-async run)
                               :conf conf
                               :help help})

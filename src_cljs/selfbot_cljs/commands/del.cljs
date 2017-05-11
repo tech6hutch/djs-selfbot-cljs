@@ -1,7 +1,6 @@
 (ns selfbot-cljs.commands.del
   (:require [clojure.string :refer [join]]
-            [goog.object :as o]
-            [selfbot-cljs.core :as h]))
+            [selfbot-cljs.core :refer [error js-async]]))
 
 (defn run
   "(prefix)del [n] <text>
@@ -14,8 +13,8 @@
   (let [n (.abs js/Math (or n 50))
         text (join " " text)]
     (-> (.edit msg text)
-        (.then #(-> (.delete % n) (.catch h/error)))
-        (.catch h/error))))
+        (.then #(-> (.delete % n) (.catch error)))
+        (.catch error))))
 
 (def conf (clj->js {:enabled true
                     :selfbot true
@@ -30,6 +29,6 @@
               :usage "[n:int{0}] <text:str> [...]"
               :usageDelim " "})
 
-(o/set js/module "exports" #js{:run run
-                               :conf conf
-                               :help help})
+(aset js/module "exports" #js{:run (js-async run)
+                              :conf conf
+                              :help help})

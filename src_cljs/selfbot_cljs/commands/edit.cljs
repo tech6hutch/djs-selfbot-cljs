@@ -1,7 +1,6 @@
 (ns selfbot-cljs.commands.edit
   (:require [clojure.string :refer [join]]
-            [goog.object :as o]
-            [selfbot-cljs.core :as h]
+            [selfbot-cljs.core :refer [error js-async]]
             [selfbot-cljs.utils :refer [set-timeout]]))
 
 (defn run
@@ -14,8 +13,8 @@
   (prn "args:" n text1 text2)
   (let [n (.abs js/Math (or n 50))]
     (-> (.edit msg text1)
-        (.then (partial set-timeout #(-> (.edit % text2) (.catch h/error)) n))
-        (.catch h/error))))
+        (.then (partial set-timeout client #(-> (.edit % text2) (.catch error)) n))
+        (.catch error))))
 
 (def conf (clj->js {:enabled true
                     :selfbot true
@@ -30,6 +29,6 @@
               :usage "[n:int{0}] <text1:str> <text2:str>"
               :usageDelim "|"})
 
-(o/set js/module "exports" #js{:run run
-                               :conf conf
-                               :help help})
+(aset js/module "exports" #js{:run (js-async run)
+                              :conf conf
+                              :help help})

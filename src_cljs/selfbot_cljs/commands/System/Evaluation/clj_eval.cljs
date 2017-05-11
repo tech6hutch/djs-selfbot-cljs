@@ -1,8 +1,7 @@
 (ns selfbot-cljs.commands.System.Evaluation.clj-eval
   (:require [clojure.string :as str]
             [cljs.js :as cljs]
-            [goog.object :as o]
-            [selfbot-cljs.core :as h]))
+            [selfbot-cljs.core :refer [log error js-async]]))
 
 ; (def state (cljs/empty-state))
 
@@ -102,15 +101,15 @@
     (-> (.sendMessage chan (str "`ERROR` ```xl\n"
                                 (client.funcs.clean client (res :error))
                                 "\n```"))
-        (.catch h/error))
+        (.catch error))
     (if (or (string? (res :value)) (coll? (res :value)))
       (-> (.sendCode chan "clj" (client.funcs.clean client (res :value)))
-          (.catch h/error))
+          (.catch error))
       (let [value (.inspect (js/require "util")
                             (res :value)
                             #js{:depth 0})]
         (-> (.sendCode chan "clj" (client.funcs.clean client value))
-            (.catch h/error))))))
+            (.catch error))))))
 
 (defn run
   [client msg [code]]
@@ -126,7 +125,7 @@
         (-> (.sendMessage chan (str "`ERROR` ```xl\n"
                                     (client.funcs.clean client e)
                                     "\n```"))
-            (.catch h/error))
+            (.catch error))
         (if (.-stack e)
           (.. client -funcs (log (.-stack e) "error")))))))
 
@@ -142,6 +141,6 @@
               :usage "<expression:str>"
               :usageDelim ""})
 
-(o/set js/module "exports" #js{:run run
-                               :conf conf
-                               :help help})
+(aset js/module "exports" #js{:run (js-async run)
+                              :conf conf
+                              :help help})

@@ -1,10 +1,14 @@
 {
   "name": "hutch-selfbot-clj",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "My selfbot",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tech6hutch/djs-selfbot-cljs.git"
   },
   "author": {
     "name": "Hutch Moore",
@@ -12,8 +16,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "discord.js": "^11.0.0",
     "komada": "tech6hutch/komada#indev",
-    "source-map-support": "^0.4.11"
+    "source-map-support": "^0.4.11",
+    "superagent": "^3.5.2"
   }
 }

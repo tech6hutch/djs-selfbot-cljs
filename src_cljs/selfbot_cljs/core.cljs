@@ -32,8 +32,14 @@
   [& more]
   (apply (.-error js/console) more))
 
-(defn -main [& args]
-  (let [config (edn/read-string (slurp (str "config.edn")))
+(defn js-async
+  "Turns f into the equivalent of an ES8 async function."
+  [f]
+  (fn [& more] (.resolve js/Promise (apply f more))))
+
+(defn- -main [& args]
+  (let [Komada (js/require "komada")
+        config (edn/read-string (slurp (str "config.edn")))
         sep (.-sep (js/require "path"))]
     ;; Komada reads from these environment vars
     (set! (.-env js/process)
@@ -46,17 +52,10 @@
                                     "selfbot_cljs")
                        :compiledLang "cljs"}))
     ;; Initialize Komada
-    (->> (.start (js/require "komada")
-                 #js{:botToken (config :token)
-                     :ownerID (config :ownerID)
-                     :clientID (config :ownerID)
-                     :prefix (config :prefix)
-                     :selfbot true})
-        ;; Set the timer object (for set-timeout) (timers on Discord.Client
-        ;; objects are automatically cancelled if the client is destroyed).
-        ;; For code in commands, inhibitors, monitors, providers, functions, and
-        ;; events that's outside an exported function or is in an init, this
-        ;; call to reset! will not have happened yet.
-        (reset! utils/timer))))
+    (let [client (Komada. #js{:ownerID (config :ownerID)
+                              :clientID (config :ownerID)
+                              :prefix (config :prefix)
+                              :selfbot true})]
+      (.login client (config :token)))))
 
 (set! *main-cli-fn* -main)

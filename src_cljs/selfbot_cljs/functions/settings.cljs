@@ -5,7 +5,7 @@
             [selfbot-cljs.core :as h]
             [selfbot-cljs.utils :refer [slurp spit set-timeout]]))
 
-(h/log "Beginning of settings.js (settings.cljs)")
+; (h/log "Beginning of settings.js (settings.cljs)")
 
 (def ^:private sep (.-sep (js/require "path")))
 
@@ -25,7 +25,7 @@
                 (catch :default e
                   (h/warn e)
                   (h/log "Creating file settings.edn")
-                  (set-timeout write-settings 2000 {})
+                  (set-timeout js/global write-settings 2000 {})
                   {}))) ; Set settings to empty map
 
 ;; Not atom
@@ -36,7 +36,7 @@
 ;                 (catch :default e
 ;                   (h/warn e)
 ;                   (h/log "Creating file settings.edn")
-;                   (set-timeout write-settings 2000 {})
+;                   (set-timeout js/global write-settings 2000 {})
 ;                   {}))) ; Set settings to empty map
 
 ; Write changes to file whenever there are changes
@@ -104,4 +104,4 @@
 
 (aset js/module "exports" settings)
 
-(h/log "End of settings.js (settings.cljs)")
+; (h/log "End of settings.js (settings.cljs)")

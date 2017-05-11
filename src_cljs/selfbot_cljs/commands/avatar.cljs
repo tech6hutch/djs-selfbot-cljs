@@ -1,12 +1,11 @@
 (ns selfbot-cljs.commands.avatar
-  (:require [goog.object :as o]
-            [selfbot-cljs.core :as h]))
+  (:require [selfbot-cljs.core :refer [error js-async]]))
 
 (defn send-avatar
   [chan user]
   (-> chan
       (.send (str "<@" (.-id user) ">'s avatar:\n" (.-avatarURL user)))
-      (.catch h/error)))
+      (.catch error)))
 
 (defn run
   "(prefix)avatar [@user1] [@user2 ...]
@@ -29,6 +28,6 @@
               :usage "[users:user] [...]"
               :usageDelim " "})
 
-(o/set js/module "exports" #js{:run run
-                               :conf conf
-                               :help help})
+(aset js/module "exports" #js{:run (js-async run)
+                              :conf conf
+                              :help help})

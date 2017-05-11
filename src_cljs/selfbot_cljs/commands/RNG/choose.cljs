@@ -1,7 +1,6 @@
 (ns selfbot-cljs.commands.RNG.choose
   (:require [clojure.string :as str]
-            [goog.object :as o]
-            [selfbot-cljs.core :as h]))
+            [selfbot-cljs.core :refer [error js-async]]))
 
 (defn strip-or
   "Removes 'or ' from the last element of coll."
@@ -36,7 +35,7 @@
     (-> (.send (.-channel msg) (str "I chose **"
                                     (get choices (rand-int (count choices)))
                                     "**"))
-        (.catch h/error))))
+        (.catch error))))
 
 (def conf (clj->js {:enabled true
                     :selfbot false
@@ -52,6 +51,6 @@
               :usage "<choices:str> [...]"
               :usageDelim "|"})
 
-(o/set js/module "exports" #js{:run run
-                               :conf conf
-                               :help help})
+(aset js/module "exports" #js{:run (js-async run)
+                              :conf conf
+                              :help help})

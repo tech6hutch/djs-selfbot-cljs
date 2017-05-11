@@ -1,4 +1,4 @@
-exports.run = (client, msg, [code]) => {
+exports.run = async (client, msg, [code]) => {
   try {
     /* These vars are available for use in the eval */
     /* eslint-disable no-unused-vars */
@@ -38,7 +38,7 @@ exports.run = (client, msg, [code]) => {
 
 exports.conf = {
   enabled: true,
-  guildOnly: false,
+  runIn: ["text", "dm", "group"],
   aliases: ["js-eval", "js"],
   permLevel: 10,
   botPerms: [],

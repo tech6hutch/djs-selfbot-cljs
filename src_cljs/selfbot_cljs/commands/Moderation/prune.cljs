@@ -1,6 +1,5 @@
 (ns selfbot-cljs.commands.Moderation.prune
-  (:require [goog.object :as o]
-            [selfbot-cljs.core :as h]))
+  (:require [selfbot-cljs.core :refer [log error js-async]]))
 
 (defn run
   "(prefix)prune <n>
@@ -21,13 +20,13 @@
                                     .array
                                     (.slice 0 n))]
                 (-> js/Promise
-                    (.all (.map my-messages #(-> % .delete (.catch h/error))))
+                    (.all (.map my-messages #(-> % .delete (.catch error))))
                     (.then (fn [deleted-msgs]
-                            (h/log (if (= (.-length deleted-msgs) 1)
+                            (log (if (= (.-length deleted-msgs) 1)
                                     (str "Deleted " (.-length deleted-msgs) " message")
                                     (str "Deleted " (.-length deleted-msgs) " messages")))))
-                    (.catch h/error)))))
-      (.catch h/error)))
+                    (.catch error)))))
+      (.catch error)))
 
 (def conf (clj->js {:enabled true
                     :selfbot true
@@ -44,6 +43,6 @@
               :usageDelim ""
               :extendedHelp "<n> is the number of messages to delete (it only looks in the last 100 messages in the channel, though, including other people's messages, so it may not find `n` messages of my own)."})
 
-(o/set js/module "exports" #js{:run run
-                               :conf conf
-                               :help help})
+(aset js/module "exports" #js{:run (js-async run)
+                              :conf conf
+                              :help help})

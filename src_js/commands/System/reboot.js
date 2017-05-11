@@ -1,6 +1,4 @@
-throw new Error("Disabled");
-
-exports.run = (client, msg) => {
+exports.run = async (client, msg) => {
   msg.channel.send("Reboot command (JS)");
 };
 

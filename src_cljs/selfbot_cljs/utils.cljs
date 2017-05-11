@@ -15,16 +15,17 @@
 
 ;; JS helpers
 
-(def timer (atom js/global))
-
 (defn set-timeout
   "Wrapper for timer.setTimeout"
-  ([f] (.setTimeout @timer f))
-  ([f delay] (.setTimeout @timer f delay))
-  ([f delay & params] (apply (.-setTimeout @timer) f delay params)))
+  ([timer] (.-setTimeout timer))
+  ([timer f] (.setTimeout timer f))
+  ([timer f delay] (.setTimeout timer f delay))
+  ([timer f delay & params] (apply (.-setTimeout timer) f delay params)))
 
 (defn delay
   "Turns set-timeout into a Promise"
-  [delay]
-  ;; % is the Promise's resolve function
-  (js/Promise. #(set-timeout % delay)))
+  ([timer]
+   (partial delay timer))
+  ([timer delay]
+   ;; % is the Promise's resolve function
+   (js/Promise. #(set-timeout timer % delay))))

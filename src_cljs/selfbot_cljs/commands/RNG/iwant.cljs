@@ -1,6 +1,5 @@
 (ns selfbot-cljs.commands.RNG.iwant
-  (:require [goog.object :as o]
-            [selfbot-cljs.core :as h]))
+  (:require [selfbot-cljs.core :refer [error js-async]]))
 
 (defn init
   [client]
@@ -24,7 +23,6 @@
   `spice` is the percent chance of \"special\" words being used, out of 10. If
   provided, should be between 0 and 10. Default is 2."
   [_ msg [spice]]
-  (h/log "Got one command arg" spice (or spice 2))
   (let [spice (.round js/Math (* (or spice 2) 10))
         dict (.-word-dictionary js/exports)]
     ;; `spice` is now an integer from 0 - 100
@@ -34,7 +32,7 @@
                                     " in my "
                                     (rand-noun dict spice)
                                     "."))
-        (.catch h/error))))
+        (.catch error))))
 
 (def conf (clj->js {:enabled true
                     :selfbot false
@@ -50,7 +48,7 @@
               :usageDelim ""
               :extendedHelp "`spice` is the percent chance of \"special\" words being used, out of 10. If provided, should be between 0 and 10. Default is 2."})
 
-(o/set js/module "exports" #js{:init init
-                               :run run
-                               :conf conf
-                               :help help})
+(aset js/module "exports" #js{:init init
+                              :run (js-async run)
+                              :conf conf
+                              :help help})

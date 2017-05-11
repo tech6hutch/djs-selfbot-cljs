@@ -1,6 +1,5 @@
 (ns selfbot-cljs.commands.RNG.coinflip
-  (:require [goog.object :as o]
-            [selfbot-cljs.core :as h]))
+  (:require [selfbot-cljs.core :refer [error js-async]]))
 
 (defn run
   "(prefix)coinflip
@@ -9,7 +8,7 @@
   [client msg]
   (-> (.send (.-channel msg)
              (str "**" (if (> (js/Math.random) 0.5) "Heads" "Tails") "**"))
-      (.catch h/error)))
+      (.catch error)))
 
 (def conf (clj->js {:enabled true
                     :selfbot false
@@ -25,6 +24,6 @@
               :usage ""
               :usageDelim ""})
 
-(o/set js/module "exports" #js{:run run
-                               :conf conf
-                               :help help})
+(aset js/module "exports" #js{:run (js-async run)
+                              :conf conf
+                              :help help})

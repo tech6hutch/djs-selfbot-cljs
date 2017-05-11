@@ -1,6 +1,5 @@
 (ns selfbot-cljs.commands.show-playing
-  (:require [goog.object :as o]
-            [selfbot-cljs.core :as h]))
+  (:require [selfbot-cljs.core :refer [error js-async]]))
 
 (defn run
   "(prefix)showplaying <@user>
@@ -8,7 +7,7 @@
   Shows the user's playing status"
   [client msg [user]]
   (-> (.sendCode (.-channel msg) "" (.. user -presence -game -name))
-      (.catch h/error)))
+      (.catch error)))
 
 (def conf (clj->js {:enabled true
                     :selfbot false
@@ -22,6 +21,6 @@
               :description "Shows the user's playing status."
               :usage "<user:user>"})
 
-(o/set js/module "exports" #js{:run run
-                               :conf conf
-                               :help help})
+(aset js/module "exports" #js{:run (js-async run)
+                              :conf conf
+                              :help help})

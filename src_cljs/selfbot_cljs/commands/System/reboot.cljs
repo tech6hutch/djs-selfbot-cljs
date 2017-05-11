@@ -1,7 +1,7 @@
 (ns selfbot-cljs.commands.System.reboot
-  (:require [selfbot-cljs.core :as h]))
+  (:require [selfbot-cljs.core :refer [log error js-async]]))
 
-; (h/log "Loading reboot.js")
+; (log "Loading reboot.js")
 ;
 ; (def default-channel-id "247839977277358081")
 ;
@@ -12,17 +12,17 @@
 ;                                   (:reboot-message @settings))]
 ;       [reboot-message (:reboot-timestamp @settings)]
 ;       (do
-;         (h/error "Found reboot channel but could not find message")
+;         (error "Found reboot channel but could not find message")
 ;         [nil nil]))
 ;     (do
-;       (h/log "Starting bot")
+;       (log "Starting bot")
 ;       [nil nil])))
 ;
 ; (declare settings)
 ;
 ; (defn init
 ;   [client]
-;   (h/log "In reboot init")
+;   (log "In reboot init")
 ;   (def settings (.. client -funcs -settings))
 ;   (let [[msg timestamp] (get-reboot-settings client settings)]
 ;     (if msg
@@ -32,10 +32,10 @@
 ;                                 (/ (- (.-editedTimestamp %) timestamp)
 ;                                    1000)
 ;                                 "s)")))
-;           (.catch h/error))
+;           (.catch error))
 ;       (-> (.get (.-channels client) default-channel-id)
 ;           (.send "Starting bot")
-;           (.catch h/error)))))
+;           (.catch error)))))
 
 ; (defn run
 ;   "(prefix)reboot
@@ -47,11 +47,12 @@
 ;                         :reboot-timestamp (.-createdTimestamp msg))
 ;   (-> (.send (.-channel msg) ":fuelpump: Rebooting...")
 ;       (.then #(.exit js/process))
-;       (.catch h/error)))
+;       (.catch error)))
 
 (defn run
   [client msg [& args]]
-  (.send (.-channel msg) "Reboot command"))
+  (-> (.send (.-channel msg) "Reboot command")
+      (.catch error)))
 
 (def conf (clj->js {:enabled true
                     :runIn ["text" "dm" "group"]
@@ -68,7 +69,7 @@
 ;                  "Rebooting..." "Redémarrage"})
 
 (aset js/module "exports" #js{;:init init
-                              :run run
+                              :run (js-async run)
                               :conf conf
                               :help help})
                               ; :strings strings})
