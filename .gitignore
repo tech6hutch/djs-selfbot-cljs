@@ -1,6 +1,7 @@
 node_modules
 config.edn
 bwd
+storage
 out
 cljs.jar
 .repl-1.9.473

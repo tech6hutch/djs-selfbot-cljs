@@ -94,12 +94,14 @@
 ;   []
 ;   (zipmap settings-names (mapv get settings-names)))
 
-(o/set js/module "exports" #js{;:get get
-                              ;  :set set
-                              ;  :get-all get-all
-                               :settings settings
-                               :settings-names settings-names
-                               :settings-defaults settings-defaults
-                               :write-settings write-settings})
+; (aset js/module "exports" #js{;:get get
+;                               ; :set set
+;                               ; :get-all get-all
+;                               :settings settings
+;                               :settings-names settings-names
+;                               :settings-defaults settings-defaults
+;                               :write-settings write-settings})
+
+(aset js/module "exports" settings)
 
 (h/log "End of settings.js (settings.cljs)")
