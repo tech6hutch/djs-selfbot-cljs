@@ -16,7 +16,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "komada": "tech6hutch/komada#indev",
+    "komada": "github:tech6hutch/komada#indev",
     "source-map-support": "^0.4.11",
     "superagent": "^3.5.2"
   }

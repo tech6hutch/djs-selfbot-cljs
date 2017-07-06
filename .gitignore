@@ -1,8 +1,12 @@
-node_modules
+# Node and NPM
+/node_modules
+package-lock.json
+
+# Config and Komada
 config.edn
-bwd
-storage
-out
+/src_js/bwd
+/storage
+/out
 cljs.jar
 .repl-1.9.473
 main.js

@@ -52,10 +52,9 @@
                                     "selfbot_cljs")
                        :compiledLang "cljs"}))
     ;; Initialize Komada
-    (let [client (Komada. #js{:ownerID (config :ownerID)
-                              :clientID (config :ownerID)
-                              :prefix (config :prefix)
-                              :selfbot true})]
+    (let [client (Komada.Client. #js{:ownerID (config :ownerID)
+                                     :prefix (config :prefix)
+                                     :selfbot true})]
       (.login client (config :token)))))
 
 (set! *main-cli-fn* -main)
