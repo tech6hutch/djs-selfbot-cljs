@@ -1,4 +1,4 @@
-(defproject selfbot-cljs "0.1.0-SNAPSHOT"
+(defproject selfbot-cljs "0.2.0-SNAPSHOT"
   :description "My selfbot."
   :url "https://github.com/tech6hutch/djs-selfbot-cljs#readme"
   :license {:name "Eclipse Public License"
