@@ -16,7 +16,10 @@
   },
   "license": "MIT",
   "dependencies": {
+    "discord.js": "hydrabolt/discord.js",
     "komada": "github:tech6hutch/komada#indev",
+    "moment": "^2.18.1",
+    "moment-duration-format": "^1.3.0",
     "source-map-support": "^0.4.11",
     "superagent": "^3.5.2"
   }
