@@ -1,6 +1,6 @@
 {
   "name": "hutch-selfbot-clj",
-  "version": "0.1.0",
+  "version": "0.2.0-SNAPSHOT",
   "description": "My selfbot",
   "homepage": "https://github.com/tech6hutch/djs-selfbot-cljs#readme",
   "bugs": {
