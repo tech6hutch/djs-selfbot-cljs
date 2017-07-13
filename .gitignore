@@ -2,11 +2,25 @@
 /node_modules
 package-lock.json
 
-# Config and Komada
+# Komada, configuration, and storage
 config.edn
 /src_js/bwd
 /storage
+
+# CLJS and init
 /out
-cljs.jar
 .repl-1.9.473
 main.js
+
+# Clojure and Lein
+/target
+/classes
+/checkouts
+pom.xml
+pom.xml.asc
+*.jar
+*.class
+/.lein-*
+/.nrepl-port
+.hgignore
+.hg/
