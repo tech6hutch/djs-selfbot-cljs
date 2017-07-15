@@ -1,18 +1,17 @@
+const { inspect } = require("util");
+
 exports.run = async (client, msg, [code]) => {
   try {
     /* These vars are available for use in the eval */
     /* eslint-disable no-unused-vars */
-    const message = msg;
     const guild = msg.guild;
-    const channel = msg.channel;
-    const chan = channel;
+    const chan = msg.channel;
+    const mentChan = msg.mentions.channels.first();
+    const mentRole = msg.mentions.roles.first();
+    const mentMem = chan.type === "text" ? msg.mentions.members.first() : null;
     const mentUser = msg.mentions.users.first();
-    const mentMem = mentUser ?
-      guild.fetchMember(mentUser) :
-      null;
 
-    const user = client.user;
-    const me = user;
+    const me = client.user;
     const pres = me.presence;
 
     const users = client.users;
@@ -21,28 +20,24 @@ exports.run = async (client, msg, [code]) => {
     const chans = channels;
     /* eslint-enable no-unused-vars */
 
-    console.log(code);
     let evaled = eval(code);
-    console.log(evaled);
-    if (typeof evaled !== "string") {
-      evaled = require("util").inspect(evaled, {depth: 0});
-    }
-    msg.channel.sendCode("js", client.funcs.clean(client, evaled));
+    if (evaled instanceof Promise) evaled = await evaled;
+    if (typeof evaled !== "string") evaled = inspect(evaled, {depth: 0});
+    msg.sendCode("js", client.funcs.clean(client, evaled));
   } catch (err) {
-    msg.channel.sendMessage(`\`ERROR\` \`\`\`xl\n${
-      client.funcs.clean(client, err)
-      }\n\`\`\``);
-    if (err.stack) client.funcs.log(err.stack, "error");
+    msg.sendMessage(`\`ERROR\` \`\`\`xl\n${client.funcs.clean(client, err)}\n\`\`\``);
+    if (err.stack) client.emit("error", err.stack);
   }
 };
 
 exports.conf = {
   enabled: true,
   runIn: ["text", "dm", "group"],
-  aliases: ["js-eval", "js"],
+  aliases: ["js-eval", "js", "/"],
   permLevel: 10,
   botPerms: [],
   requiredFuncs: [],
+  requiredSettings: [],
 };
 
 exports.help = {

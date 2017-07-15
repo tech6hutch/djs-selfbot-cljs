@@ -2,10 +2,13 @@
   (:require [cljs.nodejs :as nodejs]
             [cljs.reader :as edn]
             ; [cljs.js :as cljs])
-            [goog.object :as o]
-            [selfbot-cljs.utils :as utils :refer [slurp]]))
+            [goog]
+            [selfbot-cljs.utils :as utils :refer [slurp]]
+            [cljs-promises.async]))
 
 (nodejs/enable-util-print!)
+
+(cljs-promises.async/extend-promises-as-pair-channels!)
 
 ; (def state (cljs/empty-state))
 
@@ -18,17 +21,17 @@
 ;                  #(cb (clj->js %))))
 
 (defn log
-  "Calls the JS function console.log with the arguments."
+  "Logs to console."
   [& more]
   (apply (.-log js/console) more))
 
 (defn warn
-  "Calls the JS function console.warn with the arguments."
+  "Logs the warning to console."
   [& more]
   (apply (.-warn js/console) more))
 
 (defn error
-  "Calls the JS function console.error with the arguments."
+  "Logs the error to console."
   [& more]
   (apply (.-error js/console) more))
 
@@ -38,6 +41,10 @@
   (fn [& more] (.resolve js/Promise (apply f more))))
 
 (defn- -main [& args]
+  ;; Monkeypatch goog.provide so CLJS pieces can be reloaded
+  ;; (I'm literally just removing all its checks)
+  (set! goog.provide (fn [name]
+                       (goog.constructNamespace_ name)))
   (let [Komada (js/require "komada")
         config (edn/read-string (slurp (str "config.edn")))
         sep (.-sep (js/require "path"))]
@@ -54,7 +61,8 @@
     ;; Initialize Komada
     (let [client (Komada.Client. #js{:ownerID (config :ownerID)
                                      :prefix (config :prefix)
-                                     :selfbot true})]
+                                     :selfbot true
+                                     :cmdPrompt true})]
       (.login client (config :token)))))
 
 (set! *main-cli-fn* -main)

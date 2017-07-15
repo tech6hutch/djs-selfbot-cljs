@@ -1,6 +1,6 @@
 (ns selfbot-cljs.commands.System.debug
   (:require [clojure.string :refer [lower-case]]
-            [goog.object :as o]
+            [goog.object :as o :refer [set] :rename {set oset}]
             [selfbot-cljs.core :refer [error js-async]]
             [selfbot-cljs.utils :refer [slurp]]))
 
@@ -16,14 +16,24 @@
       (.get "help")
       (.run client msg [cmd])))
 
+(defn get-code-lang
+  [obj type]
+  (let [code-lang (or (if (= type "command")
+                        (.. obj -help -codeLang)
+                        (.-codeLang obj))
+                      "JS")]
+    (if (string? code-lang)
+      code-lang
+      (do
+        (error "code-lang was not a string:" code-lang)
+        (prn code-lang)
+        "JS"))))
+
 (defn get-piece-path
   "Returns a vector of dir (including trailing slash) and filename"
   [client type name obj ext]
   ;; Komada base dirs already end with sep
-  (let [base-dir (if (= "JS"
-                        (if (= type "command")
-                          (.. obj -help -codeLang)
-                          (.-codeLang obj)))
+  (let [base-dir (if (= "JS" (get-code-lang obj type))
                    (.-clientBaseDir client)
                    (.-outBaseDir client))
         category (or (o/getValueByKeys obj "help" "category") "General")
@@ -47,9 +57,7 @@
 
 (defn send-debug-message
   [client msg type name obj ext]
-  (let [cmd? (= type "command")
-        code-lang (or (if cmd? (.. obj -help -codeLang) (.-codeLang obj))
-                      "JS")
+  (let [code-lang (get-code-lang obj type)
         [dir filename] (get-piece-path client type name obj ext)]
     (.sendCode (.-channel msg)
                "asciidoc"
@@ -58,7 +66,7 @@
                     "        src " filename "\n"
                     "     actual " name ".js" "\n"
                     "Type `"
-                    (.. msg -guildConf -prefix) "debug " type " " name " src"
+                    (.. msg -guildSettings -prefix) "debug " type " " name " src"
                     "` to see source"))))
 
 (defn send-src-message
@@ -89,9 +97,9 @@
 
 (defn run-list-pieces
   [client chan type pieces]
-  (let [pieces-names (if (object? pieces)
-                       (.keys js/Object pieces)
-                       (.keyArray pieces))
+  (let [pieces-names (if (instance? js/Map pieces)
+                       (.keyArray pieces)
+                       (.keys js/Object pieces))
         pieces-msg (if (> (count pieces-names) 0)
                      (.reduce pieces-names #(str %1 ", " %2))
                      (str "No " type "s loaded"))]
@@ -106,16 +114,14 @@
                               "inhibitor" "commandInhibitors"
                               "monitor" "messageMonitors"
                               "function" "funcs"
-                              "provider" "providers"))]
+                              "provider" "providers"
+                              "finalizer" "commandFinalizers"))]
     (if (= name "*")
       (run-list-pieces client (.-channel msg) type pieces)
-      (let [obj (if (object? pieces)
-                  (aget pieces name)
-                  (.get pieces name))
-            code-lang (or (if (= type "command")
-                            (.. obj -help -codeLang)
-                            (.-codeLang obj))
-                          "JS")
+      (let [obj (if (instance? js/Map pieces)
+                  (.get pieces name)
+                  (aget pieces name))
+            code-lang (get-code-lang obj type)
             ext (lower-case (or ext code-lang))]
         (if obj
           (if src
@@ -134,10 +140,10 @@
 
 (def help #js{:name "debug"
               :description "Show debugging info on some thing or list all things."
-              :usage "<command|inhibitor|monitor|function|provider> <name:str> [src] [ext:str]"
+              :usage "<command|inhibitor|monitor|function|provider|finalizer> <name:str> [src] [ext:str]"
               :usageDelim " "
               :extendedHelp "Use `*` as name to list all pieces of that type."})
 
-(aset js/module "exports" #js{:run (js-async run)
+(oset js/module "exports" #js{:run (js-async run)
                               :conf conf
                               :help help})

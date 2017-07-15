@@ -1,11 +1,11 @@
 (ns selfbot-cljs.events.messageDelete
-  (:require [goog.object :as o]
+  (:require [goog.object :refer [set] :rename {set oset}]
             [selfbot-cljs.core :as h]))
 
-(def del-watch-guilds #{"239114449389092866"   ; IRISHTRISH
-                        "189144583383285770"   ; Hazel's TFH server
-                        "218618899158007808"   ; Neon's TFH server
+(def del-watch-guilds #{"218618899158007808"   ; Neon's TFH server
                         "221910104495095808"   ; KekBot server
+                        "287724189283254273"   ; KekBot gaming lounge
+                        "298429737527672832"   ; Godson's stream server
                         "260202843686830080"}) ; York's server
 
 (def del-log-channel "267110067298500608")
@@ -31,4 +31,4 @@
                       (.-content msg)))
           (.catch h/error)))))
 
-(o/set js/exports "run" run)
+(oset js/exports "run" run)
