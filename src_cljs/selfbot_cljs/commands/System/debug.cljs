@@ -1,6 +1,6 @@
 (ns selfbot-cljs.commands.System.debug
   (:require [clojure.string :refer [lower-case]]
-            [goog.object :as o :refer [set] :rename {set oset}]
+            [goog.object :as o :refer [get set] :rename {get oget, set oset}]
             [selfbot-cljs.core :refer [error js-async]]
             [selfbot-cljs.utils :refer [slurp]]))
 
@@ -109,7 +109,7 @@
 (defn run
   "(prefix)debug <type> <name> ['src' ext]"
   [client msg [type name src ext]]
-  (let [pieces (aget client (case type
+  (let [pieces (oget client (case type
                               "command" "commands"
                               "inhibitor" "commandInhibitors"
                               "monitor" "messageMonitors"
@@ -120,7 +120,7 @@
       (run-list-pieces client (.-channel msg) type pieces)
       (let [obj (if (instance? js/Map pieces)
                   (.get pieces name)
-                  (aget pieces name))
+                  (oget pieces name))
             code-lang (get-code-lang obj type)
             ext (lower-case (or ext code-lang))]
         (if obj
